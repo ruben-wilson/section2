@@ -2,7 +2,7 @@ class DiaryEntry
   def initialize(title, contents) # title, contents are strings
     @title = title 
     @contents = contents
-    @called = 0
+    @alread_used_method_once = 0
     @read = 0
   end
 
@@ -18,12 +18,8 @@ class DiaryEntry
     @contents.split(" ").count
   end
 
-  def word_count
-    word_count = @contents.split(" ").count
-  end
-  
   def reading_time(wpm)
-    words = word_count()
+    words = count_words()
     mins = words.to_f / wpm
     return "#{mins} minute(s)"
   end
@@ -31,34 +27,31 @@ class DiaryEntry
 
 
   def reading_chunk(wpm, minutes) 
-    string = @contents.split(" ")
-    read_able = wpm * minutes 
-    read = @read
-    last_element_in_arr = word_count 
-    if @called > 0
-      p @read
-      p string[@read, last_element_in_arr].count
-      p  read_able
-      if string[@read, last_element_in_arr].count <= read_able
-        p "in first "
-       string[@read, last_element_in_arr-1].join(" ")
-       return
-      else
-        p "in first second "
-        @read += read_able
-        string = string[@read+1, @read+read_able].join(" ")
-      end 
+    what_can_be_read = wpm * minutes 
+    content_to_read = count_words()
+    array_of_words = @contents.split(" ")
+    if @alread_used_method_once > 0
+      if what_can_be_read >= content_to_read - @read
+        p " in here "
+        @alread_used_method_once = 0
+        read = @read
+        @read = 0
+        return array_of_words[read, content_to_read].join(" ")
+
+      elsif what_can_be_read < content_to_read - @read
+        p "at b"
+        return array_of_words[@read, what_can_be_read -1].join(" ")
+      end
+    end
+    if what_can_be_read > content_to_read
+      return @contents
+    elsif what_can_be_read < content_to_read
+      @alread_used_method_once += 1
+      @read += what_can_be_read
+      p "at bottom"
+      return array_of_words[0, what_can_be_read - 1].join(" ")
     end 
-    if read_able > string.length
-      @called = 0
-      @read += read_able
-      p " in second set frist"
-      string.join(" ")
-    else
-      p "in second second set"
-      @called += 1
-      string = string[0,read_able].join(" ")
-    end 
+    
     
     # `wpm` is an integer representing the number
     # of words the user can read per minute
@@ -71,4 +64,8 @@ class DiaryEntry
     # The next call after that it should restart from the beginning.
   end
 end
+string = Array.new(200, "first_half") + Array.new(200, "second_half")
+string = string.join(" ")
+diary = DiaryEntry.new("thursday", string)
+
 
