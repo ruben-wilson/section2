@@ -32,14 +32,12 @@ class DiaryEntry
     array_of_words = @contents.split(" ")
     if @alread_used_method_once > 0
       if what_can_be_read >= content_to_read - @read
-        p " in here "
         @alread_used_method_once = 0
         read = @read
         @read = 0
         return array_of_words[read, content_to_read].join(" ")
 
       elsif what_can_be_read < content_to_read - @read
-        p "at b"
         return array_of_words[@read, what_can_be_read -1].join(" ")
       end
     end
@@ -48,7 +46,6 @@ class DiaryEntry
     elsif what_can_be_read < content_to_read
       @alread_used_method_once += 1
       @read += what_can_be_read
-      p "at bottom"
       return array_of_words[0, what_can_be_read - 1].join(" ")
     end 
   end
