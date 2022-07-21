@@ -28,6 +28,4 @@ class FocusTasks
 
 end
 
-tasks = FocusTasks.new("do washing up, walk dog")
-tasks.show_tasks
 
